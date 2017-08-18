@@ -82,7 +82,7 @@ my %fruit_color = ("apple", "red", "banana", "yellow");
 #  You can use whitespace and the "=>" operator to lay them out more
 #  nicely:
 
-my %fruit_color = (
+%fruit_color = (
   apple  => "red",
   banana => "yellow",
 );
@@ -103,19 +103,20 @@ my @colors = values %fruit_color;
 # More complex data types can be constructed using references, which
 # allow you to build arrays and hashes within arrays and hashes.
 
+my (@array, %hash);
 my $array_ref = \@array;
 my $hash_ref = \%hash;
-my @array_of_arrays = (\@array1, \@array2, \@array3);
+my @array_of_arrays = (\@fruits, \@colors);
 
 # You can also create anonymous arrays or hashes, returning a reference:
 
-my $fruits = ["apple", "banana"];
-my $colors = {apple => "red", banana => "yellow"};
+my $fruits_ref = ["apple", "banana"];
+my $colors_ref = {apple => "red", banana => "yellow"};
 
 # References can be dereferenced by prefixing the appropriate sigil.
 
-my @fruits_array = @$fruits;
-my %colors_hash = %$colors;
+my @fruits_array = @$fruits_ref;
+my %colors_hash = %$colors_ref;
 
 # As a shortcut, the arrow operator can be used to dereference and
 # access a single value.
@@ -130,57 +131,63 @@ my $value = $hash_ref->{banana};
 
 # Perl has most of the usual conditional and looping constructs.
 
-if ($var) {
-  ...
+my $var = 'foo';
+if (not $var) {
+  print "var is false\n";
 } elsif ($var eq 'bar') {
-  ...
+  print "var is bar\n";
 } else {
-  ...
+  print "var is true but not bar\n";
 }
 
-unless (condition) {
-  ...
+$var = 0;
+unless ($var) {
+  print "var is false\n";
 }
 # This is provided as a more readable version of "if (!condition)"
 
 # the Perlish post-condition way
-print "Yow!" if $zippy;
-print "We have no bananas" unless $bananas;
+my $zippy = 1;
+print "Yow!\n" if $zippy;
+my $bananas = 5;
+print "We have no bananas\n" unless $bananas;
 
 #  while
-while (condition) {
-  ...
+while ($bananas) {
+  print "$bananas bananas remaining\n";
+  $bananas--;
 }
 
 
 # for loops and iteration
-for my $i (0 .. $max) {
-  print "index is $i";
+for my $i (0 .. $#fruits) {
+  print "fruit at index $i: $fruits[$i]\n";
 }
 
-for my $element (@elements) {
-  print $element;
+for my $color (@colors) {
+  print "$color\n";
 }
-
-map {print} @elements;
 
 # implicitly
 
-for (@elements) {
+my @uppercase = map {uc} @colors;
+
+for (@uppercase) {
   print;
+  print "\n";
 }
 
 # iterating through a hash (for and foreach are equivalent)
 
-foreach my $key (keys %hash) {
-  print $key, ': ', $hash{$key}, "\n";
+foreach my $fruit (keys %fruit_color) {
+  print $fruit, ': ', $fruit_color{$fruit}, "\n";
 }
 
 # the Perlish post-condition way again
-print for @elements;
+print "$_\n" for @colors;
 
 # iterating through the keys and values of a referenced hash
-print $hash_ref->{$_} for keys %$hash_ref;
+print $colors_ref->{$_}, "\n" for keys %$colors_ref;
 
 #### Regular expressions
 
@@ -189,13 +196,17 @@ print $hash_ref->{$_} for keys %$hash_ref;
 # elsewhere. However, in short:
 
 # Simple matching
-if (/foo/)       { ... }  # true if $_ contains "foo"
-if ($x =~ /foo/) { ... }  # true if $x contains "foo"
+$_ = 'barfoobar';
+if (/foo/)       { print "\$_ contains 'foo'\n"; }
+my $x = 'barfoobar';
+if ($x =~ /foo/) { print "\$x contains 'foo'\n"; }
 
 # Simple substitution
 
 $x =~ s/foo/bar/;         # replaces foo with bar in $x
-$x =~ s/foo/bar/g;        # replaces ALL INSTANCES of foo with bar in $x
+print "\$x = $x\n";
+$x =~ s/bar/foo/g;        # replaces ALL INSTANCES of bar with foo in $x
+print "\$x = $x\n";
 
 
 #### Files and I/O
@@ -221,7 +232,7 @@ my @lines = <$in>;
 # function.
 
 print $out @lines;
-print $log $msg, "\n";
+print $log "This is a log message\n";
 
 #### Writing subroutines
 
